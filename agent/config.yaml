@@ -1,0 +1,4 @@
+model: "qwen-max"
+env: "mock"                # 改成 "real" 启用真实驱动
+db_path: "data/demo.db"
+tickets_path: "data/tickets.json"

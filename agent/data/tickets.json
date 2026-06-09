@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "title": "user-service 持续崩溃，疑似数据库连接问题",
+    "description": "user-service 的 Pod user-svc-jkl 处于 CrashLoopBackOff 状态，已多次重启。初步怀疑与数据库连接失败有关。建议尽快排查数据库配置和网络连通性。同时，payment-service 也出现重启，需联合分析。",
+    "priority": "high",
+    "created_at": "2026-06-02T12:25:11.692796",
+    "status": "open"
+  },
+  {
+    "id": 2,
+    "title": "user-service 持续崩溃，疑似数据库连接问题",
+    "description": "user-service 的 Pod user-svc-jkl 处于 CrashLoopBackOff 状态，已多次重启。初步怀疑与数据库连接失败有关。同时，payment-service 也出现重启，需联合分析数据库配置和网络连通性。建议立即排查数据库服务状态。",
+    "priority": "high",
+    "created_at": "2026-06-02T12:25:30.026641",
+    "status": "open"
+  },
+  {
+    "id": 3,
+    "title": "user-service 持续崩溃，疑似数据库连接问题",
+    "description": "user-service 的 Pod user-svc-jkl 处于 CrashLoopBackOff 状态，已重启 12 次。初步判断与数据库连接失败或配置错误有关。建议立即排查数据库连通性、凭证和应用日志。同时，payment-service 也存在重启现象，需联合分析。",
+    "priority": "high",
+    "created_at": "2026-06-02T12:25:44.951548",
+    "status": "open"
+  },
+  {
+    "id": 4,
+    "title": "payment-service 数据库连接超时与连接池耗尽",
+    "description": "payment-service 的 Pod payment-svc-abc 日志显示：\n- [2025-06-01 09:15:32] ERROR timeout connecting to database\n- [2025-06-01 09:16:30] ERROR database connection pool exhausted\n需立即排查数据库连接配置及资源瓶颈，建议人工介入处理。",
+    "priority": "high",
+    "created_at": "2026-06-05T17:26:35.706176",
+    "status": "open"
+  }
+]

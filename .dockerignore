@@ -1,0 +1,24 @@
+
+.venv
+
+# Python 缓存
+__pycache__
+*.pyc
+*.pyo
+
+# Git
+.git
+.gitignore
+
+# 环境变量和密钥——不要打包进镜像
+.env
+config.txt
+
+# IDE 配置
+.idea
+.vscode
+
+#测试文件
+test_rag.py
+企业IT服务管理规范测试文档.txt
+
