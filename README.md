@@ -15,11 +15,11 @@ graph TD
     E --> G
     F --> G
     G --> A
-
-技术栈
+ ```
+## 技术栈
 FastAPI / LangChain / ChromaDB / DashScope / Docker / Railway
 
-快速开始
+## 快速开始
 1. 克隆仓库
 git clone https://github.com/2442511245/Fast API-IT-Assistant.git
 cd 仓库名
@@ -41,10 +41,10 @@ uvicorn main:app --reload
 docker build -t my-ai-backend .
 docker run -p 8000:8000 -e DASHSCOPE_API_KEY="your-key" my-ai-backend
 
-在线演示
+## 在线演示
 部署在 Railway: [https://你的域名.railway.app/docs](https://你的域名.railway.app/docs)
 
-接口说明
+## 接口说明
 - `POST /rag/upload` - 上传文档构建知识库
 - `POST /rag/ask` - 知识库问答
 - `POST /agent/chat` - Agent 工具调用
