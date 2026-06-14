@@ -2,12 +2,19 @@
 
 一个基于 FastAPI 的 AI 后端服务，集成 **RAG 知识库问答**、**多工具智能体**和**多轮对话**三个核心模块，并通过意图驱动的调度层实现智能路由。
 
-## 架构
-- `rag/`：文档上传、向量检索、问答，支持自动创建工单
-- `agent/`：基于 ReAct 的多工具智能体（数据库、K8s、搜索、计算器）
-- `chat/`：带记忆的多轮对话
-- `orchestrator/`：意图分类与协同调度
+## 系统架构
 
+```mermaid
+graph TD
+    A[用户请求] --> B{FastAPI 入口}
+    B --> C[意图识别]
+    C --> D[聊天模块]
+    C --> E[RAG 模块]
+    C --> F[多 Agent 编排]
+    D --> G[统一响应]
+    E --> G
+    F --> G
+    G --> A
 ## 技术栈
 FastAPI / LangChain / ChromaDB / DashScope / Docker / Railway
 
