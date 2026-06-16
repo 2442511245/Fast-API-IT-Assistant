@@ -9,7 +9,10 @@ __pycache__/
 # 环境变量和密钥（绝对不能上传）
 .env
 config.txt
+
 .env.txt
+=======
+
 
 # IDE 配置
 .idea/
@@ -33,5 +36,8 @@ models/
 *.bin
 *.safetensors
 
+
 #向量数据库
 chroma_db/
+=======
+
