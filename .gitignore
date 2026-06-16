@@ -8,6 +8,7 @@ __pycache__/
 
 # 环境变量和密钥（绝对不能上传）
 .env
+.env.txt
 config.txt
 
 # IDE 配置

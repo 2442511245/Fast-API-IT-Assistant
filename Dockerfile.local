@@ -1,0 +1,16 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# 本地构建时使用清华源加速
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 如果你本地有 GPU，可以安装 CUDA 版本
+# RUN pip install torch torchvision torchaudio
+
+# 复制项目
+COPY . .
+
+# 本地调试端口固定 8000
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
