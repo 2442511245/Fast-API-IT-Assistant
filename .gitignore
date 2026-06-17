@@ -11,6 +11,10 @@ __pycache__/
 .env.txt
 config.txt
 
+.env.txt
+=======
+
+
 # IDE 配置
 .idea/
 .vscode/
@@ -32,4 +36,9 @@ rag/models/
 models/
 *.bin
 *.safetensors
+
+
+#向量数据库
+chroma_db/
+=======
 
