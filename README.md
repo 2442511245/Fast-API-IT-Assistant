@@ -275,7 +275,7 @@ docker run -p 8000:8000 -e DASHSCOPE_API_KEY="your-key" my-ai-backend
 
 已部署在 Railway，可在线体验所有接口：
 
-👉 `https://你的域名.railway.app/docs`
+👉 `https://fast-api-it-assistant.railway.internal/docs`
 
 ---
 
@@ -301,23 +301,6 @@ docker run -p 8000:8000 -e DASHSCOPE_API_KEY="your-key" my-ai-backend
 | `/orchestrator/assist` | POST | JSON | ⭐ 统一入口：意图识别后自动分流 |
 
 所有接口均可在 Swagger UI（`/docs`）中交互式测试。
-
----
-
-## 项目特色
-
-| 特色 | 说明 |
-|------|------|
-| 🧠 **意图识别中枢** | 一个入口，四种能力（Chat / RAG / Agent / Mixed），LLM 驱动自动路由 |
-| 🔁 **RAG 业务闭环** | 检索 → 回答 → 工单 → 反馈 → 知识回流，知识库持续自进化 |
-| 💭 **思考链可视化** | Agent 每步推理可追踪、可展示、可审计，前端直接渲染"思考面板" |
-| ⚡ **流式输出 SSE** | RAG 和 Agent 均支持 Server-Sent Events，首 token 延迟低，用户体验流畅 |
-| 🛡️ **安全纵深防御** | SQL 注入防护 + 命令注入防护 + eval 替换 + 输入净化 + 二次确认机制 |
-| 🔄 **Mock/Real 一键切换** | 演示零风险（mock 模拟数据），生产可落地（real 真实工具调用） |
-| 🧪 **87 个自动化测试** | 覆盖 RAG 检索、Agent 工具、意图分类、安全防御，pytest CI 可回归 |
-| 📜 **Swagger 自动文档** | FastAPI 原生交互式 API 文档，每个接口可直接在浏览器中测试 |
-| 🐳 **Docker 即服务** | 一行命令部署完整后端，适配 Railway 等 PaaS 平台 |
-| 📊 **评估驱动迭代** | 45 条中文 IT 运维评估集 + 自动化评估脚本，关键词 F1 / 来源命中率可量化 |
 
 ---
 
