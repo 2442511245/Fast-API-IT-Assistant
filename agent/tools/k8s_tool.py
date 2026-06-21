@@ -1,4 +1,5 @@
 import json
+import shlex
 from . import register_tool
 from ..config import config
 
@@ -57,7 +58,9 @@ MOCK_CLUSTER = {
 def kubectl_exec(command: str) -> str:
     if config.env == "real":
         import subprocess
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        # 安全修复：shell=False + shlex 解析，消除命令注入风险
+        args = shlex.split(command.strip())
+        result = subprocess.run(args, shell=False, capture_output=True, text=True, timeout=30)
         return result.stdout if result.returncode == 0 else result.stderr
     else:
         cmd_parts = command.strip().split()
