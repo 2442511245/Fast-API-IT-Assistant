@@ -1,0 +1,362 @@
+[
+  {
+    "id": 1,
+    "question": "如何重新加载 Nginx 配置而不中断服务？",
+    "expected_keywords": ["nginx -s reload", "重载", "不中断连接"],
+    "category": "Nginx 运维",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 2,
+    "question": "Nginx 报 502 Bad Gateway 错误怎么排查？",
+    "expected_keywords": ["后端服务", "不可用", "端口", "正常运行"],
+    "category": "Nginx 运维",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 3,
+    "question": "Nginx 反向代理怎么设置？",
+    "expected_keywords": ["proxy_pass", "proxy_set_header", "Host", "X-Real-IP"],
+    "category": "Nginx 运维",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 4,
+    "question": "Nginx 504 Gateway Timeout 是什么意思？",
+    "expected_keywords": ["后端响应超时", "proxy_read_timeout", "性能瓶颈"],
+    "category": "Nginx 运维",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 5,
+    "question": "MySQL 数据库怎么做全量备份？",
+    "expected_keywords": ["mysqldump", "--all-databases", "备份"],
+    "category": "MySQL 运维",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 6,
+    "question": "MySQL 出现 Too many connections 错误怎么办？",
+    "expected_keywords": ["max_connections", "连接数过多", "连接泄漏"],
+    "category": "MySQL 运维",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 7,
+    "question": "怎么查看 MySQL 的慢查询日志？",
+    "expected_keywords": ["slow_query_log", "mysqldumpslow", "慢查询"],
+    "category": "MySQL 运维",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 8,
+    "question": "如何从 MySQL 备份文件恢复数据？",
+    "expected_keywords": ["mysql", "backup.sql", "恢复"],
+    "category": "MySQL 运维",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 9,
+    "question": "Kubernetes Pod 一直处于 CrashLoopBackOff 状态怎么排查？",
+    "expected_keywords": ["Pod 日志", "启动命令", "环境变量", "依赖服务"],
+    "category": "Kubernetes 运维",
+    "difficulty": "hard",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 10,
+    "question": "kubectl 怎么查看某个 Pod 的日志？",
+    "expected_keywords": ["kubectl logs", "pod-name", "namespace"],
+    "category": "Kubernetes 运维",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 11,
+    "question": "如何用 kubectl 扩容 Deployment？",
+    "expected_keywords": ["kubectl scale", "deployment", "--replicas"],
+    "category": "Kubernetes 运维",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 12,
+    "question": "Kubernetes Pod 一直 Pending 是什么原因？",
+    "expected_keywords": ["资源不足", "CPU", "内存", "PVC"],
+    "category": "Kubernetes 运维",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 13,
+    "question": "在 Linux 上怎么创建一个新用户并赋予 sudo 权限？",
+    "expected_keywords": ["useradd", "usermod", "sudo", "wheel"],
+    "category": "Linux 系统管理",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 14,
+    "question": "如何查看 Linux 服务器的磁盘使用情况？",
+    "expected_keywords": ["df -h", "磁盘使用"],
+    "category": "Linux 系统管理",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 15,
+    "question": "Linux 上怎么开放一个防火墙端口？",
+    "expected_keywords": ["firewall-cmd", "ufw", "allow", "端口"],
+    "category": "Linux 系统管理",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 16,
+    "question": "如何查看 Linux 上占用 CPU 最高的进程？",
+    "expected_keywords": ["top", "%CPU", "ps aux"],
+    "category": "Linux 系统管理",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 17,
+    "question": "网络不通时应该怎么排查？",
+    "expected_keywords": ["ping", "traceroute", "nslookup", "telnet", "端口"],
+    "category": "网络故障排查",
+    "difficulty": "hard",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 18,
+    "question": "怎么检查某个端口是否开放？",
+    "expected_keywords": ["telnet", "nc", "ss -tlnp", "netstat"],
+    "category": "网络故障排查",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 19,
+    "question": "DNS 解析失败怎么排查？",
+    "expected_keywords": ["/etc/resolv.conf", "nslookup", "dig", "DNS 服务器"],
+    "category": "网络故障排查",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 20,
+    "question": "如何重置 VPN 密码？",
+    "expected_keywords": ["IT 自助门户", "安全设置", "VPN 密码", "重置"],
+    "category": "账号与密码管理",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 21,
+    "question": "域账号被锁定了怎么解锁？",
+    "expected_keywords": ["IT 服务台", "工号", "姓名", "解锁"],
+    "category": "账号与密码管理",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 22,
+    "question": "密码策略有哪些要求？",
+    "expected_keywords": ["12 位", "大小写字母", "数字", "特殊字符", "90 天"],
+    "category": "账号与密码管理",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 23,
+    "question": "服务器 CPU 使用率超过多少需要告警？",
+    "expected_keywords": ["90%", "5 分钟", "监控"],
+    "category": "监控与告警",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 24,
+    "question": "收到 P0 级别告警后应该怎么处理？",
+    "expected_keywords": ["5 分钟", "响应", "15 分钟", "定位", "30 分钟", "恢复"],
+    "category": "监控与告警",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 25,
+    "question": "告警处理完成后还需要做什么？",
+    "expected_keywords": ["关闭告警", "处理说明", "每周五", "回顾", "根因"],
+    "category": "监控与告警",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 26,
+    "question": "公司的数据备份策略是什么？",
+    "expected_keywords": ["全量备份", "每周日", "增量备份", "每日", "归档备份", "每月"],
+    "category": "备份策略",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 27,
+    "question": "核心业务的恢复时间目标（RTO）是多少？",
+    "expected_keywords": ["30 分钟", "4 小时", "RTO", "核心业务"],
+    "category": "备份策略",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 28,
+    "question": "数据恢复演练多久做一次？",
+    "expected_keywords": ["每季度", "恢复演练"],
+    "category": "备份策略",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 29,
+    "question": "Docker 容器怎么查看实时资源使用情况？",
+    "expected_keywords": ["docker stats", "资源使用"],
+    "category": "Docker 容器管理",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 30,
+    "question": "如何进入一个正在运行的 Docker 容器？",
+    "expected_keywords": ["docker exec", "-it", "/bin/bash"],
+    "category": "Docker 容器管理",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 31,
+    "question": "Docker 镜像怎么导出和导入？",
+    "expected_keywords": ["docker save", "docker load", "image.tar"],
+    "category": "Docker 容器管理",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 32,
+    "question": "P0 和 P1 工单的首次响应时间要求是多少？",
+    "expected_keywords": ["15分钟", "30分钟", "P0", "P1"],
+    "category": "IT 服务台流程",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 33,
+    "question": "工单处理完成后需要什么条件才能关单？",
+    "expected_keywords": ["用户确认", "3 个工作日", "自动关单"],
+    "category": "IT 服务台流程",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 34,
+    "question": "电脑无法上网应该排查哪些方面？",
+    "expected_keywords": ["IP 配置", "DNS", "代理设置"],
+    "category": "IT 服务台流程",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 35,
+    "question": "MySQL 主从延迟怎么判断？",
+    "expected_keywords": ["Seconds_Behind_Master", "主从延迟"],
+    "category": "MySQL 运维",
+    "difficulty": "hard",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 36,
+    "question": "Kubernetes ImagePullBackOff 错误怎么解决？",
+    "expected_keywords": ["镜像名称", "镜像仓库", "认证"],
+    "category": "Kubernetes 运维",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 37,
+    "question": "如何查看 Linux 服务器上占用带宽的进程？",
+    "expected_keywords": ["iftop", "nethogs", "带宽"],
+    "category": "网络故障排查",
+    "difficulty": "hard",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 38,
+    "question": "如何在 Linux 上设置定时备份任务？",
+    "expected_keywords": ["crontab", "凌晨 2 点", "自动备份"],
+    "category": "备份策略",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 39,
+    "question": "Redis 集群怎么搭建？",
+    "expected_keywords": [],
+    "category": "未覆盖知识",
+    "difficulty": "hard",
+    "answer_type": "out_of_kb"
+  },
+  {
+    "id": 40,
+    "question": "什么是 Prompt Engineering？",
+    "expected_keywords": [],
+    "category": "未覆盖知识",
+    "difficulty": "easy",
+    "answer_type": "out_of_kb"
+  },
+  {
+    "id": 41,
+    "question": "如何配置 Jenkins 的 CI/CD 流水线？",
+    "expected_keywords": [],
+    "category": "未覆盖知识",
+    "difficulty": "hard",
+    "answer_type": "out_of_kb"
+  },
+  {
+    "id": 42,
+    "question": "如何清理 Docker 的无用镜像释放磁盘空间？",
+    "expected_keywords": ["docker image prune", "清理", "无用镜像"],
+    "category": "Docker 容器管理",
+    "difficulty": "medium",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 43,
+    "question": "Linux 上怎么查看所有监听端口？",
+    "expected_keywords": ["ss -tlnp", "netstat", "监听"],
+    "category": "网络故障排查",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 44,
+    "question": "申请系统权限需要什么审批流程？",
+    "expected_keywords": ["ITSM 工单", "直属主管", "审批"],
+    "category": "账号与密码管理",
+    "difficulty": "easy",
+    "answer_type": "in_kb"
+  },
+  {
+    "id": 45,
+    "question": "Kubernetes 如何限制命名空间的资源使用？",
+    "expected_keywords": ["ResourceQuota", "LimitRange", "资源配额"],
+    "category": "Kubernetes 运维",
+    "difficulty": "hard",
+    "answer_type": "in_kb"
+  }
+]
