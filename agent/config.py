@@ -11,6 +11,8 @@ class AgentConfig:
     tickets_path: str = "data/tickets.json"
     k8s_kubeconfig: str = ""
     db_conn_str: str = ""
+    # 安全配置（审计整改新增，映射 config.yaml 中 security: 段）
+    security: Dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_yaml(cls, path: str = None) -> "AgentConfig":
