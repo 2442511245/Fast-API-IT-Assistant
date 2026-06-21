@@ -2,3 +2,38 @@ model: "qwen-max"
 env: "mock"                # 改成 "real" 启用真实驱动
 db_path: "data/demo.db"
 tickets_path: "data/tickets.json"
+
+# ========== 安全配置（审计整改新增）==========
+security:
+  audit:
+    enabled: true
+    log_dir: "logs/audit"
+    retention_days: 90        # 日志保留 90 天
+
+  sql:
+    read_only: true
+    allowed_commands: [SELECT, SHOW, DESCRIBE, EXPLAIN, WITH]
+    forbidden_keywords:
+      - INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE
+      - CREATE, REPLACE, GRANT, REVOKE, EXEC, EXECUTE
+    max_query_length: 4096
+    max_result_rows: 1000
+
+  k8s:
+    allowed_verbs: [get, describe, logs, top]
+    allowed_resources:
+      - pods, deployments, services, configmaps
+      - namespaces, nodes, events, replicasets
+    forbidden_verbs: [delete, drain, taint, cordon, exec]
+    forbidden_flags: ["--force", "--grace-period=0", "--all"]
+    allowed_namespaces: [default, staging, monitoring]
+    read_only_namespaces: [production]
+
+  calculator:
+    max_expression_length: 200
+
+  confirm:
+    token_ttl_seconds: 300    # 确认令牌有效期 5 分钟
+    require_for:
+      - kubectl.scale
+      - kubectl.rolling-update
