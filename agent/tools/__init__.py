@@ -4,6 +4,18 @@ import json
 
 _registered_tools: Dict[str, dict] = {}
 
+# ---------- 输入安全清洗 ----------
+_MAX_INPUT_LEN = 4096
+
+
+def sanitize_input(value: Any) -> Any:
+    """清洗工具输入参数：长度截断 + 空字节过滤"""
+    if isinstance(value, str):
+        if len(value) > _MAX_INPUT_LEN:
+            value = value[:_MAX_INPUT_LEN]
+        return value.replace("\x00", "")
+    return value
+
 def register_tool(name: str, description: str, parameters: Dict[str, Any]):
     """装饰器工厂：将函数注册为工具，自动生成 OpenAI 兼容的 JSON Schema"""
     def decorator(func: Callable):
@@ -34,7 +46,9 @@ def execute_tool(name: str, arguments: Dict[str, Any]) -> str:
     if name not in _registered_tools:
         return f"错误：未注册的工具 '{name}'"
     try:
-        result = _registered_tools[name]["func"](**arguments)
+        # 安全清洗：对所有字符串参数做长度截断和空字节过滤
+        cleaned_args = {k: sanitize_input(v) for k, v in arguments.items()}
+        result = _registered_tools[name]["func"](**cleaned_args)
         # 确保返回字符串
         return json.dumps(result, ensure_ascii=False, default=str) if not isinstance(result, str) else result
     except Exception as e:
