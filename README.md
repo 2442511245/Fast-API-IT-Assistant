@@ -209,7 +209,7 @@ docker run -p 8000:8000 -e DASHSCOPE_API_KEY="your-key" my-ai-backend
 在线演示
 
 已部署在 Railway：
-👉 https://你的域名.railway.app/docs
+👉 fast-api-it-assistant.railway.internal/docs
 （可在线体验所有接口）
 
 ---
