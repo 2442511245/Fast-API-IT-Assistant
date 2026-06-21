@@ -1,0 +1,432 @@
+#!/usr/bin/env python3
+"""
+seed_knowledge_base.py — 知识库冷启动脚本
+
+功能：
+  1. 生成一份中文 IT 运维知识文档（seed_knowledge.txt）
+  2. 使用项目现有的 RAG 流水线将文档向量化并存入 ChromaDB
+  3. 验证索引结果
+
+用法：
+  python scripts/seed_knowledge_base.py                  # 生成文档 + 构建知识库
+  python scripts/seed_knowledge_base.py --generate-only  # 仅生成文档
+  python scripts/seed_knowledge_base.py --index-only     # 仅索引已有文档
+  python scripts/seed_knowledge_base.py --doc-path /path/to/custom.txt  # 使用自定义文档
+
+依赖：
+  - 项目 rag/ 模块（rag.core.rag）
+  - DASHSCOPE_API_KEY 环境变量（LLM 问答时需要，仅索引则不需要）
+  - ChromaDB、sentence-transformers（已在 requirements.txt）
+
+注意：
+  - 如果本地没有 bge-small-zh 模型，首次运行会自动从 HuggingFace 下载（约 100MB）
+  - 重复运行会覆盖 chroma_db/ 中的旧数据（ChromaDB 通过 persist_directory 更新）
+"""
+
+import argparse
+import os
+import sys
+import time
+from pathlib import Path
+
+# 将项目根目录加入 Python 路径，确保能导入 rag 等模块
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+# ============================================================
+# 种子知识文档内容（中文 IT 运维知识库）
+# ============================================================
+
+SEED_KNOWLEDGE = r"""
+# 企业 IT 运维知识库
+
+本文档包含企业日常 IT 运维的常见问题、操作指南和最佳实践。
+
+---
+
+## 一、Nginx 运维指南
+
+### 1.1 配置文件位置
+Nginx 主配置文件位于 /etc/nginx/nginx.conf。
+站点配置文件通常放在 /etc/nginx/conf.d/ 或 /etc/nginx/sites-enabled/ 目录下。
+修改配置后，务必执行 nginx -t 检查语法，确认无误后再执行 nginx -s reload 或 systemctl reload nginx 重载配置。
+
+### 1.2 常用运维命令
+- 启动服务：systemctl start nginx
+- 停止服务：systemctl stop nginx
+- 重启服务：systemctl restart nginx
+- 重载配置：nginx -s reload（推荐，不中断连接）
+- 查看状态：systemctl status nginx
+- 查看错误日志：tail -f /var/log/nginx/error.log
+- 查看访问日志：tail -f /var/log/nginx/access.log
+
+### 1.3 常见问题排查
+**502 Bad Gateway**：后端服务不可用。检查后端服务是否正常运行，端口是否正确。
+**504 Gateway Timeout**：后端响应超时。检查 proxy_read_timeout 配置，排查后端性能瓶颈。
+**403 Forbidden**：权限问题。检查文件权限和 SELinux 状态。
+**404 Not Found**：资源不存在。检查 root 指令配置和文件路径是否正确。
+
+### 1.4 反向代理配置示例
+```
+server {
+    listen 80;
+    server_name example.com;
+    location / {
+        proxy_pass http://backend:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+---
+
+## 二、MySQL 数据库运维
+
+### 2.1 连接管理
+- 本地连接：mysql -u root -p
+- 远程连接：mysql -h 192.168.1.100 -u username -p -P 3306
+- 查看当前连接数：SHOW PROCESSLIST;
+- 查看最大连接数：SHOW VARIABLES LIKE 'max_connections';
+- 设置最大连接数：SET GLOBAL max_connections = 500;
+
+### 2.2 备份与恢复
+- 全量备份：mysqldump -u root -p --all-databases > full_backup.sql
+- 单库备份：mysqldump -u root -p database_name > db_backup.sql
+- 恢复数据：mysql -u root -p database_name < backup.sql
+- 定时备份建议：使用 crontab 设置每日凌晨 2 点自动备份
+
+### 2.3 常见问题
+**连接数过多**：错误信息 "Too many connections"。解决：调大 max_connections 或排查连接泄漏。
+**慢查询**：开启 slow_query_log，通过 mysqldumpslow 分析慢查询日志。
+**主从延迟**：检查 Seconds_Behind_Master 指标，优化网络和硬件配置。
+
+---
+
+## 三、Kubernetes 运维
+
+### 3.1 常用 kubectl 命令
+- 查看 Pod：kubectl get pods -n <namespace>
+- 查看 Pod 详情：kubectl describe pod <pod-name> -n <namespace>
+- 查看 Pod 日志：kubectl logs <pod-name> -n <namespace>
+- 查看最近 100 行日志：kubectl logs --tail=100 <pod-name>
+- 查看 Deployment：kubectl get deployments -n <namespace>
+- 扩缩容：kubectl scale deployment <name> --replicas=N -n <namespace>
+- 进入容器：kubectl exec -it <pod-name> -n <namespace> -- /bin/bash
+
+### 3.2 常见故障排查
+**Pod CrashLoopBackOff**：检查 Pod 日志，排查启动命令、环境变量、依赖服务是否正常。
+**Pod Pending**：检查资源是否充足（CPU/内存），PVC 是否绑定成功。
+**ImagePullBackOff**：检查镜像名称是否正确，镜像仓库认证是否配置。
+**服务不可达**：检查 Service 和 Endpoint 是否正确关联 Pod。
+
+### 3.3 资源配额管理
+建议为每个命名空间设置 ResourceQuota 和 LimitRange，防止资源滥用。
+通过 kubectl top pods 查看实时资源使用情况。
+
+---
+
+## 四、Linux 系统管理
+
+### 4.1 用户与权限
+- 创建用户：useradd -m username
+- 设置密码：passwd username
+- 添加 sudo 权限：usermod -aG sudo username（Debian）或 usermod -aG wheel username（RHEL）
+- 修改文件权限：chmod 755 filename
+- 修改文件所有者：chown user:group filename
+
+### 4.2 磁盘与存储
+- 查看磁盘使用：df -h
+- 查看目录大小：du -sh /path/to/dir
+- 查看 inode 使用：df -i
+- 清理日志文件：journalctl --vacuum-time=7d
+
+### 4.3 进程管理
+- 查看进程：ps aux | grep process_name
+- 按 CPU 使用排序：top -o %CPU
+- 按内存使用排序：top -o %MEM
+- 强制终止进程：kill -9 PID
+
+### 4.4 防火墙配置
+使用 firewalld（RHEL/CentOS）：
+- 开放端口：firewall-cmd --add-port=8080/tcp --permanent
+- 重载配置：firewall-cmd --reload
+
+使用 ufw（Ubuntu）：
+- 开放端口：ufw allow 8080/tcp
+- 查看状态：ufw status
+
+---
+
+## 五、网络故障排查
+
+### 5.1 基本诊断命令
+- 连通性测试：ping target_host
+- 路由追踪：traceroute target_host
+- DNS 解析：nslookup domain.com 或 dig domain.com
+- 端口连通性：telnet host port 或 nc -zv host port
+- 查看网络接口：ip addr 或 ifconfig
+- 查看路由表：ip route 或 route -n
+- 查看监听端口：ss -tlnp 或 netstat -tlnp
+
+### 5.2 常见网络问题
+**DNS 解析失败**：检查 /etc/resolv.conf 配置，确认 DNS 服务器可达。
+**端口不通**：检查服务是否监听、防火墙是否放行、SELinux 是否阻断。
+**网络延迟高**：使用 mtr 工具持续追踪路由和丢包情况。
+**带宽占满**：使用 iftop 或 nethogs 排查占用带宽的进程。
+
+---
+
+## 六、账号与密码管理
+
+### 6.1 密码策略
+- 最小长度：12 位
+- 复杂度要求：大小写字母 + 数字 + 特殊字符
+- 密码有效期：90 天强制更换
+- 历史记录：禁止使用最近 5 次密码
+
+### 6.2 常见操作
+- 重置 VPN 密码：登录 IT 自助门户 → 安全设置 → VPN 密码 → 重置
+- 解锁域账号：联系 IT 服务台，提供工号和姓名
+- 申请系统权限：提交 ITSM 工单，需直属主管审批
+
+---
+
+## 七、监控与告警
+
+### 7.1 监控指标
+- 服务器 CPU 使用率：告警阈值 > 90% 持续 5 分钟
+- 内存使用率：告警阈值 > 85% 持续 5 分钟
+- 磁盘使用率：告警阈值 > 80%
+- 服务可用性：HTTP 状态码非 2xx/3xx 即告警
+- 数据库连接数：告警阈值 > 80% 最大连接数
+
+### 7.2 告警处理流程
+1. 收到告警 → 确认告警级别（P0/P1/P2/P3）
+2. P0 故障：5 分钟内响应，15 分钟内定位，30 分钟内恢复
+3. P1 故障：15 分钟内响应，1 小时内定位
+4. 处理完成后在告警平台关闭告警，填写处理说明
+5. 每周五进行告警回顾，识别高频问题并推动根因解决
+
+---
+
+## 八、备份策略
+
+### 8.1 备份类型
+- 全量备份：每周日凌晨 2 点，保留 4 周
+- 增量备份：每日凌晨 2 点，保留 7 天
+- 归档备份：每月 1 号，保留 12 个月
+
+### 8.2 恢复演练
+- 每季度进行一次数据恢复演练
+- 恢复时间目标（RTO）：核心业务 30 分钟，非核心 4 小时
+- 恢复点目标（RPO）：核心业务 5 分钟，非核心 24 小时
+
+---
+
+## 九、Docker 容器管理
+
+### 9.1 常用命令
+- 查看运行容器：docker ps
+- 查看所有容器：docker ps -a
+- 查看容器日志：docker logs container_name
+- 进入容器：docker exec -it container_name /bin/bash
+- 启动/停止容器：docker start/stop container_name
+- 查看资源使用：docker stats
+
+### 9.2 镜像管理
+- 清理无用镜像：docker image prune -a
+- 查看镜像层：docker history image_name
+- 导出镜像：docker save -o image.tar image_name
+- 导入镜像：docker load -i image.tar
+
+---
+
+## 十、IT 服务台流程
+
+### 10.1 工单优先级
+- P0 紧急：影响核心业务，全公司范围
+- P1 高：影响单一部门业务
+- P2 中：影响个别用户，有替代方案
+- P3 低：一般咨询或非紧急需求
+
+### 10.2 工单处理规范
+- 首次响应时间：P0 < 15min, P1 < 30min, P2 < 2h, P3 < 8h
+- 解决时间：P0 < 4h, P1 < 8h, P2 < 48h, P3 < 5 工作日
+- 处理完成后需要用户确认方可关单
+- 用户 3 个工作日未回复则自动关单
+
+### 10.3 常见工单场景
+- 电脑无法开机：检查电源、内存条、硬盘连接
+- 无法上网：检查 IP 配置、DNS、代理设置
+- VPN 连接失败：检查账号密码、客户端版本、网络环境
+- 邮箱无法收发：检查邮箱配额、服务器状态、客户端配置
+"""
+
+
+def generate_seed_document(output_path: str) -> str:
+    """生成种子知识文档（TXT 格式）"""
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    content = SEED_KNOWLEDGE.strip()
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    file_size_kb = output_path.stat().st_size / 1024
+    line_count = content.count("\n") + 1
+    print(f"[OK] 种子文档已生成：{output_path}")
+    print(f"     大小：{file_size_kb:.1f} KB，行数：{line_count}")
+    return str(output_path)
+
+
+def build_knowledge_base(doc_path: str, persist_dir: str = "./chroma_db") -> None:
+    """使用项目 RAG 流水线构建知识库"""
+    from rag.core.rag import init_rag
+
+    print(f"[..] 开始构建知识库...")
+    print(f"     文档：{doc_path}")
+    print(f"     向量库：{persist_dir}")
+    print(f"     模型：bge-small-zh（首次运行将自动下载）")
+
+    t0 = time.time()
+
+    try:
+        chain, retriever = init_rag(doc_path)
+        elapsed = time.time() - t0
+        print(f"[OK] 知识库构建完成！耗时：{elapsed:.1f} 秒")
+        print(f"     向量库路径：{os.path.abspath(persist_dir)}")
+    except Exception as e:
+        print(f"[FAIL] 知识库构建失败：{e}")
+        print(f"     请确认：")
+        print(f"     1. 网络连接正常（首次需下载 bge-small-zh 模型）")
+        print(f"     2. DASHSCOPE_API_KEY 环境变量或 config.txt 已配置")
+        raise
+
+
+def verify_knowledge_base(persist_dir: str = "./chroma_db") -> bool:
+    """验证知识库是否可用"""
+    from rag.core.rag import build_rag_chain
+    from langchain_community.vectorstores import Chroma
+    from rag.core.rag import get_embedding
+
+    print(f"\n[..] 验证知识库...")
+
+    chroma_dir = Path(persist_dir)
+    if not chroma_dir.exists():
+        print(f"[FAIL] 向量库目录不存在：{persist_dir}")
+        return False
+
+    try:
+        # 加载已有向量库
+        embedding = get_embedding()
+        db = Chroma(
+            persist_directory=str(persist_dir),
+            embedding_function=embedding,
+        )
+
+        # 执行一条测试检索
+        test_questions = [
+            "如何重启 Nginx？",
+            "MySQL 怎么备份？",
+            "Kubernetes Pod 崩溃怎么办？",
+        ]
+
+        for q in test_questions:
+            docs = db.similarity_search_with_score(q, k=2)
+            if docs:
+                best_score = docs[0][1]
+                print(f"   [OK] '{q}' → {len(docs)} 条结果 (最佳相似度: {best_score:.3f})")
+            else:
+                print(f"   [WARN] '{q}' → 无结果（相似度可能低于阈值）")
+
+        print(f"[OK] 知识库验证完成")
+        return True
+
+    except Exception as e:
+        print(f"[FAIL] 知识库验证失败：{e}")
+        return False
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="知识库冷启动脚本 — 生成种子文档并构建 ChromaDB 向量库",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+示例：
+  %(prog)s                                    # 完整流程：生成文档 + 构建知识库
+  %(prog)s --generate-only                    # 仅生成种子文档
+  %(prog)s --index-only                       # 仅用已有文档构建知识库
+  %(prog)s --doc-path data/custom.txt         # 使用自定义文档
+  %(prog)s --persist-dir data/my_chroma       # 指定向量库路径
+  %(prog)s --skip-verify                      # 跳过验证步骤
+        """,
+    )
+
+    parser.add_argument(
+        "--generate-only",
+        action="store_true",
+        help="仅生成种子文档，不构建知识库",
+    )
+    parser.add_argument(
+        "--index-only",
+        action="store_true",
+        help="仅用已有文档构建知识库（需配合 --doc-path）",
+    )
+    parser.add_argument(
+        "--doc-path",
+        type=str,
+        default="data/seed_knowledge.txt",
+        help="种子文档输出/输入路径（默认：data/seed_knowledge.txt）",
+    )
+    parser.add_argument(
+        "--persist-dir",
+        type=str,
+        default="./chroma_db",
+        help="ChromaDB 向量库持久化目录（默认：./chroma_db）",
+    )
+    parser.add_argument(
+        "--skip-verify",
+        action="store_true",
+        help="跳过知识库验证步骤",
+    )
+
+    args = parser.parse_args()
+
+    print("=" * 55)
+    print("  FastAPI AI 运维助手 — 知识库冷启动")
+    print("=" * 55)
+
+    if args.index_only:
+        # 仅索引模式
+        if not Path(args.doc_path).exists():
+            print(f"[FAIL] 文档不存在：{args.doc_path}")
+            print(f"     请先运行 --generate-only 生成种子文档")
+            sys.exit(1)
+        build_knowledge_base(args.doc_path, args.persist_dir)
+
+    elif args.generate_only:
+        # 仅生成模式
+        generate_seed_document(args.doc_path)
+
+    else:
+        # 默认：生成 + 索引
+        generate_seed_document(args.doc_path)
+        print()
+        build_knowledge_base(args.doc_path, args.persist_dir)
+
+    # 验证
+    if not args.generate_only and not args.skip_verify:
+        verify_knowledge_base(args.persist_dir)
+
+    print(f"\n{'=' * 55}")
+    print(f"  完成！可以使用以下接口测试：")
+    print(f"  POST /rag/upload  或  POST /rag/ask")
+    print(f"  Swagger: http://localhost:8000/docs")
+    print(f"{'=' * 55}")
+
+
+if __name__ == "__main__":
+    main()
