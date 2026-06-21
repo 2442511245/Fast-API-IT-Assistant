@@ -6,6 +6,7 @@ from agent.router import router as agent_router
 from chat.router import router as chat_router
 from orchestrator.router import router as orch_router
 from agent.think_router import router as think_router
+from rag.stream_router import router as rag_stream_router
 
 # 将来还有 cli_chat 或别的模块，继续加
 
@@ -30,6 +31,7 @@ app.include_router(agent_router)    # 所有 /agent/... 的接口
 app.include_router(chat_router)    # 所有 /chat/... 的接口
 app.include_router(orch_router)
 app.include_router(think_router)
+app.include_router(rag_stream_router)   # POST /rag/ask/stream
 # 保留一个根路径测试，证明服务在跑
 @app.get("/")
 def root():
